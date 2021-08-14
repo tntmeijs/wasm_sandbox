@@ -32,6 +32,29 @@
         </section>
 
         <section>
+            <h3>Running this application locally</h3>
+            <p>
+                Install the <a href="https://www.rust-lang.org/tools/install" target="_blank">Rust</a> programming language
+            </p>
+            <p>
+                Install <a href="https://github.com/rustwasm/wasm-pack" target="_blank">wasm-pack</a> to help us compile Rust
+                into WebAssembly
+            <p>
+                Install any webserver so we can serve this website - I like to use
+                <a href="https://www.npmjs.com/package/http-server" target="_blank">http-server</a>
+            </p>
+            <p>
+                <code>cd wasm_sandbox/rs_parser</code>
+            </p>
+            <p>
+                <code>wasm-pack build --target web</code>
+            </p>
+            <p>
+                Run the HTTP server and serve everything in the repository's root folder
+            </p>
+        </section>
+
+        <section>
             <h3>About WebAssembly</h3>
             <p>
                 WebAssembly is a new type of code webbrowsers can execute. Up until now, almost everything on the web had to be
@@ -81,8 +104,16 @@
         <section>
             <h3>Run business logic</h3>
 
-            <div>
-                <input type="button" id="load-wasm-module" value="load WASM module" />
+            <div id="wasm-controls">
+                <div>
+                    <input type="button" id="load-wasm-module" value="load WebAssembly module" />
+                </div>
+                <div>
+                    <input type="button" id="initialize-wasm-module" value="initialize WebAssembly module" />
+                </div>
+                <div>
+                    <input type="button" id="execute-wasm-module" value="execute WebAssembly module" />
+                </div>
             </div>
         </section>
 

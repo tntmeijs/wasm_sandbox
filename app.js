@@ -109,10 +109,15 @@ const CONSOLE = document.getElementById("console");
 
 let rowCount = document.getElementById("row-count").value;
 let dataset = [];
+let wasmModule = null;
+let wasmModuleInitialized = false;
+let jsModule = null;
 
 document.getElementById("generate-dataset").addEventListener("click", onGenerateDataset);
 document.getElementById("row-count").addEventListener("change", event => rowCount = event.target.value);
 document.getElementById("load-wasm-module").addEventListener("click", onLoadWasmModule);
+document.getElementById("initialize-wasm-module").addEventListener("click", onInitializeWasmModule);
+document.getElementById("execute-wasm-module").addEventListener("click", onExecuteWasmModule);
 
 function logInfo(text) {
     const NOW = new Date();
@@ -130,7 +135,7 @@ function logInfo(text) {
 
     CONTAINER.appendChild(TIMESTAMP);
     CONTAINER.appendChild(CONTENT);
-    CONSOLE.appendChild(CONTAINER);
+    CONSOLE.insertBefore(CONTAINER, CONSOLE.firstChild);
 }
 
 function logWarning(text) {
@@ -149,7 +154,7 @@ function logWarning(text) {
 
     CONTAINER.appendChild(TIMESTAMP);
     CONTAINER.appendChild(CONTENT);
-    CONSOLE.appendChild(CONTAINER);
+    CONSOLE.insertBefore(CONTAINER, CONSOLE.firstChild);
 }
 
 function logError(text) {
@@ -168,7 +173,7 @@ function logError(text) {
 
     CONTAINER.appendChild(TIMESTAMP);
     CONTAINER.appendChild(CONTENT);
-    CONSOLE.appendChild(CONTAINER);
+    CONSOLE.insertBefore(CONTAINER, CONSOLE.firstChild);
 }
 
 function onGenerateDataset(event) {
@@ -213,6 +218,8 @@ function getRandomLastName() {
 }
 
 function previewDataset() {
+    const START = new Date();
+
     DATASET_PREVIEW_ROOT.replaceChildren();
     
     // Construct a table
@@ -271,14 +278,56 @@ function previewDataset() {
 
     // Display the generated table
     DATASET_PREVIEW_ROOT.appendChild(TABLE);
+
+    logInfo(`Generated dataset table preview in ${new Date() - START} ms`);
 }
 
 function onLoadWasmModule() {
-    const START = new Date();
+    if (wasmModule !== null) {
+        logWarning("WebAssembly module has been cached already");
+        return;
+    }
+
+    let START = new Date();
     
     import("./rs_parser/pkg/rs_parser.js")
         .then(module => {
             logInfo(`WebAssembly module dynamic import took ${new Date() - START} ms`);
+            wasmModule = module;
         })
         .catch(error => logError(error));
+}
+
+function onInitializeWasmModule() {
+    if (wasmModule === null) {
+        logError("WebAssembly module has not been loaded yet")
+        return;
+    }
+
+    if (wasmModuleInitialized) {
+        logWarning("WebAssembly module has been initialized already - no need to initialize it again");
+        return;
+    }
+
+    let START = new Date();
+
+    wasmModule.default()
+        .then(() => {
+            logInfo(`WebAssembly module initialization took ${new Date() - START} ms`);
+            wasmModuleInitialized = true;
+        });
+}
+
+function onExecuteWasmModule() {
+    if (wasmModule === null) {
+        logError("WebAssembly module has not been loaded yet")
+        return;
+    }
+
+    if (!wasmModuleInitialized) {
+        logError("WebAssembly module has not been initialized yet");
+        return;
+    }
+
+    wasmModule.greet("WebAssembly");
 }
