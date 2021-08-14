@@ -106,21 +106,40 @@ const LAST_NAMES = [
 
 const DATASET_PREVIEW_ROOT = document.getElementById("dataset-preview-root");
 const CONSOLE = document.getElementById("console");
+
 const LOAD_WASM_MODULE_TIME = document.getElementById("load-wasm-module-time");
 const INITIALIZE_WASM_MODULE_TIME = document.getElementById("initialize-wasm-module-time");
 const EXECUTE_WASM_MODULE_TIME = document.getElementById("execute-wasm-module-time");
 
+const LOAD_JS_MODULE_TIME = document.getElementById("load-js-module-time");
+const INITIALIZE_JS_MODULE_TIME = document.getElementById("initialize-js-module-time");
+const EXECUTE_JS_MODULE_TIME = document.getElementById("execute-js-module-time");
+
+const LOAD_JS_MINIFIED_MODULE_TIME = document.getElementById("load-js-minified-module-time");
+const INITIALIZE_JS_MINIFIED_MODULE_TIME = document.getElementById("initialize-js-minified-module-time");
+const EXECUTE_JS_MINIFIED_MODULE_TIME = document.getElementById("execute-js-minified-module-time");
+
 let rowCount = document.getElementById("row-count").value;
 let dataset = [];
+
 let wasmModule = null;
 let wasmModuleInitialized = false;
+
 let jsModule = null;
+let jsMinifiedModule = null;
 
 document.getElementById("generate-dataset").addEventListener("click", onGenerateDataset);
 document.getElementById("row-count").addEventListener("change", event => rowCount = event.target.value);
+
 document.getElementById("load-wasm-module").addEventListener("click", onLoadWasmModule);
 document.getElementById("initialize-wasm-module").addEventListener("click", onInitializeWasmModule);
 document.getElementById("execute-wasm-module").addEventListener("click", onExecuteWasmModule);
+
+document.getElementById("load-js-module").addEventListener("click", onLoadJsModule);
+document.getElementById("execute-js-module").addEventListener("click", onExecuteJsModule);
+
+document.getElementById("load-js-minified-module").addEventListener("click", onLoadJsMinifiedModule);
+document.getElementById("execute-js-minified-module").addEventListener("click", onExecuteJsMinifiedModule);
 
 function logInfo(text) {
     const NOW = new Date();
@@ -353,4 +372,53 @@ function onExecuteWasmModule() {
 
     EXECUTE_WASM_MODULE_TIME.innerText = `took ${DELTA} ms`;
     logInfo(`WebAssembly execution took ${DELTA} ms`);
+}
+
+function onLoadJsModule() {
+    if (jsModule !== null) {
+        logWarning("JavaScript module has been cached already");
+        return;
+    }
+
+    let START = new Date();
+    
+    import("./js_parser/js_parser.js")
+        .then(module => {
+            const DELTA = new Date() - START;
+            
+            LOAD_JS_MODULE_TIME.innerText = `took ${DELTA} ms`;
+            logInfo(`JavaScript module dynamic import took ${DELTA} ms`);
+            
+            jsModule = module;
+        })
+        .catch(error => logError(error));
+}
+
+function onExecuteJsModule() {
+    if (jsModule === null) {
+        logError("JavaScript module has not been loaded yet")
+        return;
+    }
+
+    if (dataset.length === 0) {
+        logError("No dataset available - please generate a dataset first");
+        return;
+    }
+
+    let START = new Date();
+
+    jsModule.greet("JavaScript");
+
+    const DELTA = new Date() - START;
+
+    EXECUTE_JS_MODULE_TIME.innerText = `took ${DELTA} ms`;
+    logInfo(`JavaScript execution took ${DELTA} ms`);
+}
+
+function onLoadJsMinifiedModule() {
+    logWarning("Load minified JS module has not been implemented yet");
+}
+
+function onExecuteJsMinifiedModule() {
+    logWarning("Execute minified JS module has not been implemented yet");
 }

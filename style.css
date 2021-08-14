@@ -1,4 +1,20 @@
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Lato&display=swap');
+
+footer {
+  display: flex;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+a {
+  text-decoration: none;
+  color: #3498db;
+}
+
+a:visited {
+  color: #7f8c8d;
+}
+
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Inconsolata', monospace;
   margin: 0 0 1rem 0;
@@ -115,4 +131,9 @@ tbody>tr:hover {
 .action-time {
   margin-left: 1rem;
   font-size: 1.25rem;
+}
+
+.side-by-side {
+  display: flex;
+  justify-content: space-around;
 }

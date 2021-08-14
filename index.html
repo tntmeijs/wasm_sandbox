@@ -104,29 +104,64 @@
         <section>
             <h3>Run business logic</h3>
 
-            <div id="wasm-controls">
-                <h6>WebAssembly</h6>
+            <div class="side-by-side">
+                <div>
+                    <h6>WebAssembly</h6>
+    
+                    <div>
+                        <input type="button" id="load-wasm-module" value="load module" class="button" />
+                        <label class="action-time" id="load-wasm-module-time"></label>
+                    </div>
+                    <div>
+                        <input type="button" id="initialize-wasm-module" value="initialize module" class="button" />
+                        <label class="action-time" id="initialize-wasm-module-time"></label>
+                    </div>
+                    <div>
+                        <input type="button" id="execute-wasm-module" value="execute" class="button" />
+                        <label class="action-time" id="execute-wasm-module-time"></label>
+                    </div>
+                </div>
 
                 <div>
-                    <input type="button" id="load-wasm-module" value="load module" class="button" />
-                    <label class="action-time" id="load-wasm-module-time"></label>
+                    <h6>JavaScript</h6>
+    
+                    <div>
+                        <input type="button" id="load-js-module" value="load module" class="button" />
+                        <label class="action-time" id="load-js-module-time"></label>
+                    </div>
+                    <div>
+                        <input type="button" id="execute-js-module" value="execute" class="button" />
+                        <label class="action-time" id="execute-js-module-time"></label>
+                    </div>
                 </div>
+
                 <div>
-                    <input type="button" id="initialize-wasm-module" value="initialize module" class="button" />
-                    <label class="action-time" id="initialize-wasm-module-time"></label>
-                </div>
-                <div>
-                    <input type="button" id="execute-wasm-module" value="execute" class="button" />
-                    <label class="action-time" id="execute-wasm-module-time"></label>
+                    <h6>JavaScript (minified)</h6>
+    
+                    <div>
+                        <input type="button" id="load-js-minified-module" value="load module" class="button" />
+                        <label class="action-time" id="load-js-minified-module-time"></label>
+                    </div>
+                    <div>
+                        <input type="button" id="execute-js-minified-module" value="execute" class="button" />
+                        <label class="action-time" id="execute-js-minified-module-time"></label>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section>
-            <hr />
             <h3>Console</h3>
             <div id="console"></div>
         </section>
+
+        <footer>
+            <div>
+                <a href="https://github.com/tntmeijs/wasm_sandbox" target="_blank">view source code</a>
+                or
+                <a href="https://linkedin.com/in/tntmeijs" target="_blank">contact me</a>
+            </div>
+        </footer>
 
         <script src="./app.js"></script>
     </body>
