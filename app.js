@@ -105,7 +105,7 @@ const LAST_NAMES = [
 ];
 
 const DATASET_PREVIEW_ROOT = document.getElementById("dataset-preview-root");
-const WASM_MODULE_LOAD_TIME_INDICATOR = document.getElementById("wasm-module-load-time-indicator");
+const CONSOLE = document.getElementById("console");
 
 let rowCount = document.getElementById("row-count").value;
 let dataset = [];
@@ -113,6 +113,63 @@ let dataset = [];
 document.getElementById("generate-dataset").addEventListener("click", onGenerateDataset);
 document.getElementById("row-count").addEventListener("change", event => rowCount = event.target.value);
 document.getElementById("load-wasm-module").addEventListener("click", onLoadWasmModule);
+
+function logInfo(text) {
+    const NOW = new Date();
+
+    const CONTAINER = document.createElement("div");
+    CONTAINER.className = "line-container";
+
+    const TIMESTAMP = document.createElement("span");
+    TIMESTAMP.className = "log-timestamp";
+    TIMESTAMP.innerText = `[${NOW.getHours()}:${NOW.getMinutes()}:${NOW.getSeconds()}:${NOW.getMilliseconds()}]`;
+
+    const CONTENT = document.createElement("span");
+    CONTENT.className = "info-log";
+    CONTENT.innerText = text;
+
+    CONTAINER.appendChild(TIMESTAMP);
+    CONTAINER.appendChild(CONTENT);
+    CONSOLE.appendChild(CONTAINER);
+}
+
+function logWarning(text) {
+    const NOW = new Date();
+
+    const CONTAINER = document.createElement("div");
+    CONTAINER.className = "line-container";
+
+    const TIMESTAMP = document.createElement("span");
+    TIMESTAMP.className = "log-timestamp";
+    TIMESTAMP.innerText = `[${NOW.getHours()}:${NOW.getMinutes()}:${NOW.getSeconds()}:${NOW.getMilliseconds()}]`;
+
+    const CONTENT = document.createElement("span");
+    CONTENT.className = "warning-log";
+    CONTENT.innerText = text;
+
+    CONTAINER.appendChild(TIMESTAMP);
+    CONTAINER.appendChild(CONTENT);
+    CONSOLE.appendChild(CONTAINER);
+}
+
+function logError(text) {
+    const NOW = new Date();
+
+    const CONTAINER = document.createElement("div");
+    CONTAINER.className = "line-container";
+
+    const TIMESTAMP = document.createElement("span");
+    TIMESTAMP.className = "log-timestamp";
+    TIMESTAMP.innerText = `[${NOW.getHours()}:${NOW.getMinutes()}:${NOW.getSeconds()}:${NOW.getMilliseconds()}]`;
+
+    const CONTENT = document.createElement("span");
+    CONTENT.className = "error-log";
+    CONTENT.innerText = text;
+
+    CONTAINER.appendChild(TIMESTAMP);
+    CONTAINER.appendChild(CONTENT);
+    CONSOLE.appendChild(CONTAINER);
+}
 
 function onGenerateDataset(event) {
     event.preventDefault();
@@ -128,6 +185,7 @@ function onGenerateDataset(event) {
 
 function generateDataset() {
     dataset = [];
+    const START = new Date();
 
     for (let row = 0; row < rowCount; ++row) {
         const RANDOM_START_BALANCE = Math.floor(Math.random() * 10000.0) + 1;
@@ -142,6 +200,8 @@ function generateDataset() {
             RANDOM_ITEMS_PURCHASED
         ]);
     }
+
+    logInfo(`Generated dataset of ${rowCount} rows in ${new Date() - START} ms`);
 }
 
 function getRandomFirstName() {
@@ -156,63 +216,69 @@ function previewDataset() {
     DATASET_PREVIEW_ROOT.replaceChildren();
     
     // Construct a table
-    const table = document.createElement("table");
-    const tableHead = document.createElement("thead");
-    const tableBody = document.createElement("tbody");
-    const tableHeadRow = document.createElement("tr");
-    const tableHeadRowIndex = document.createElement("th");
-    const tableHeadRowFirstName = document.createElement("th");
-    const tableHeadRowLastName = document.createElement("th");
-    const tableHeadRowStartBalance = document.createElement("th");
-    const tableHeadRowEndBalance = document.createElement("th");
-    const tableHeadRowItemsPurchased = document.createElement("th");
+    const TABLE = document.createElement("table");
+    const TABLE_HEAD = document.createElement("thead");
+    const TABLE_BODY = document.createElement("tbody");
+    const TABLE_HEAD_ROW = document.createElement("tr");
+    const TABLE_HEAD_ROW_INDEX = document.createElement("th");
+    const TABLE_HEAD_ROW_FIRST_NAME = document.createElement("th");
+    const TABLE_HEAD_ROW_LAST_NAME = document.createElement("th");
+    const TABLE_HEAD_ROW_START_BALANCE = document.createElement("th");
+    const TABLE_HEAD_ROW_END_BALANCE = document.createElement("th");
+    const TABLE_HEAD_ROW_ITEMS_PURCHASED = document.createElement("th");
     
-    tableHeadRowIndex.innerText = "index";
-    tableHeadRowFirstName.innerText = "first_name";
-    tableHeadRowLastName.innerText = "last_name";
-    tableHeadRowStartBalance.innerText = "start_balance";
-    tableHeadRowEndBalance.innerText = "end_balance";
-    tableHeadRowItemsPurchased.innerText = "items_purchased";
+    TABLE_HEAD_ROW_INDEX.innerText = "index";
+    TABLE_HEAD_ROW_FIRST_NAME.innerText = "first_name";
+    TABLE_HEAD_ROW_LAST_NAME.innerText = "last_name";
+    TABLE_HEAD_ROW_START_BALANCE.innerText = "start_balance";
+    TABLE_HEAD_ROW_END_BALANCE.innerText = "end_balance";
+    TABLE_HEAD_ROW_ITEMS_PURCHASED.innerText = "items_purchased";
 
     dataset.forEach((row, index) => {
-        const rowElement = document.createElement("tr");
-        const rowIndex = document.createElement("td");
-        const firstName = document.createElement("td");
-        const lastName = document.createElement("td");
-        const startBalance = document.createElement("td");
-        const endBalance = document.createElement("td");
-        const purchaseCount = document.createElement("td");
+        const ROW_ELEMENT = document.createElement("tr");
+        const ROW_INDEX = document.createElement("td");
+        const FIRST_NAME = document.createElement("td");
+        const LAST_NAME = document.createElement("td");
+        const START_BALANCE = document.createElement("td");
+        const END_BALANCE = document.createElement("td");
+        const PURCHASE_COUNT = document.createElement("td");
 
-        rowIndex.innerText = index;
-        firstName.innerText = row[0];
-        lastName.innerText = row[1];
-        startBalance.innerText = row[2];
-        endBalance.innerText = row[3];
-        purchaseCount.innerText = row[4];
+        ROW_INDEX.innerText = index;
+        FIRST_NAME.innerText = row[0];
+        LAST_NAME.innerText = row[1];
+        START_BALANCE.innerText = row[2];
+        END_BALANCE.innerText = row[3];
+        PURCHASE_COUNT.innerText = row[4];
 
-        rowElement.appendChild(rowIndex);
-        rowElement.appendChild(firstName);
-        rowElement.appendChild(lastName);
-        rowElement.appendChild(startBalance);
-        rowElement.appendChild(endBalance);
-        rowElement.appendChild(purchaseCount);
-        tableBody.appendChild(rowElement);
+        ROW_ELEMENT.appendChild(ROW_INDEX);
+        ROW_ELEMENT.appendChild(FIRST_NAME);
+        ROW_ELEMENT.appendChild(LAST_NAME);
+        ROW_ELEMENT.appendChild(START_BALANCE);
+        ROW_ELEMENT.appendChild(END_BALANCE);
+        ROW_ELEMENT.appendChild(PURCHASE_COUNT);
+        TABLE_BODY.appendChild(ROW_ELEMENT);
     });
 
-    table.appendChild(tableHead);
-    table.appendChild(tableBody);
-    tableHead.appendChild(tableHeadRow);
-    tableHeadRow.appendChild(tableHeadRowIndex);
-    tableHeadRow.appendChild(tableHeadRowFirstName);
-    tableHeadRow.appendChild(tableHeadRowLastName);
-    tableHeadRow.appendChild(tableHeadRowStartBalance);
-    tableHeadRow.appendChild(tableHeadRowEndBalance);
-    tableHeadRow.appendChild(tableHeadRowItemsPurchased);
+    TABLE.appendChild(TABLE_HEAD);
+    TABLE.appendChild(TABLE_BODY);
+    TABLE_HEAD.appendChild(TABLE_HEAD_ROW);
+    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_INDEX);
+    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_FIRST_NAME);
+    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_LAST_NAME);
+    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_START_BALANCE);
+    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_END_BALANCE);
+    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_ITEMS_PURCHASED);
 
     // Display the generated table
-    DATASET_PREVIEW_ROOT.appendChild(table);
+    DATASET_PREVIEW_ROOT.appendChild(TABLE);
 }
 
 function onLoadWasmModule() {
-    const startTime = new Date();
+    const START = new Date();
+    
+    import("./rs_parser/pkg/rs_parser.js")
+        .then(module => {
+            logInfo(`WebAssembly module dynamic import took ${new Date() - START} ms`);
+        })
+        .catch(error => logError(error));
 }

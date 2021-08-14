@@ -61,3 +61,37 @@ tbody>tr:nth-child(even) {
 tbody>tr:hover {
   background-color: #95a5a6;
 }
+
+#console {
+  height: 25rem;
+  overflow: scroll;
+}
+
+.line-container {
+  display: flex;
+  padding: 0.25rem 0.5rem
+}
+
+.line-container:nth-child(odd) {
+  background-color: #ecf0f1;
+}
+
+.line-container:hover {
+  text-decoration: underline;
+}
+
+.log-timestamp {
+  width: 10rem;
+}
+
+.info-log {
+  color: #27ae60;
+}
+
+.warning-log {
+  color: #e67e22;
+}
+
+.error-log {
+  color: #c0392b;
+}
