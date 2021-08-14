@@ -1,6 +1,8 @@
 @import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Lato&display=swap');
 h1, h2, h3, h4, h5, h6 {
   font-family: 'Inconsolata', monospace;
+  margin: 0 0 1rem 0;
+  padding: 0;
 }
 
 h1 {
@@ -33,7 +35,7 @@ body {
 }
 
 section {
-  padding: 1rem 10rem;
+  padding: 2rem 10rem;
 }
 
 p {
@@ -94,4 +96,23 @@ tbody>tr:hover {
 
 .error-log {
   color: #c0392b;
+}
+
+.button {
+  border: none;
+  width: 15rem;
+  background-color: #bdc3c7;
+  font-size: 1.25rem;
+  padding: 0.25rem;
+  margin: 0.25rem 0;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #95a5a6;
+}
+
+.action-time {
+  margin-left: 1rem;
+  font-size: 1.25rem;
 }

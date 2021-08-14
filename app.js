@@ -106,6 +106,9 @@ const LAST_NAMES = [
 
 const DATASET_PREVIEW_ROOT = document.getElementById("dataset-preview-root");
 const CONSOLE = document.getElementById("console");
+const LOAD_WASM_MODULE_TIME = document.getElementById("load-wasm-module-time");
+const INITIALIZE_WASM_MODULE_TIME = document.getElementById("initialize-wasm-module-time");
+const EXECUTE_WASM_MODULE_TIME = document.getElementById("execute-wasm-module-time");
 
 let rowCount = document.getElementById("row-count").value;
 let dataset = [];
@@ -292,7 +295,11 @@ function onLoadWasmModule() {
     
     import("./rs_parser/pkg/rs_parser.js")
         .then(module => {
-            logInfo(`WebAssembly module dynamic import took ${new Date() - START} ms`);
+            const DELTA = new Date() - START;
+            
+            LOAD_WASM_MODULE_TIME.innerText = `took ${DELTA} ms`;
+            logInfo(`WebAssembly module dynamic import took ${DELTA} ms`);
+            
             wasmModule = module;
         })
         .catch(error => logError(error));
@@ -313,7 +320,11 @@ function onInitializeWasmModule() {
 
     wasmModule.default()
         .then(() => {
-            logInfo(`WebAssembly module initialization took ${new Date() - START} ms`);
+            const DELTA = new Date() - START;
+
+            INITIALIZE_WASM_MODULE_TIME.innerText = `took ${DELTA} ms`;
+            logInfo(`WebAssembly module initialization took ${DELTA} ms`);
+
             wasmModuleInitialized = true;
         });
 }
@@ -329,5 +340,17 @@ function onExecuteWasmModule() {
         return;
     }
 
+    if (dataset.length === 0) {
+        logError("No dataset available - please generate a dataset first");
+        return;
+    }
+
+    let START = new Date();
+
     wasmModule.greet("WebAssembly");
+
+    const DELTA = new Date() - START;
+
+    EXECUTE_WASM_MODULE_TIME.innerText = `took ${DELTA} ms`;
+    logInfo(`WebAssembly execution took ${DELTA} ms`);
 }
