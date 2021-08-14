@@ -1,0 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata&family=Lato&display=swap');
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Inconsolata', monospace;
+}
+
+h1 {
+  font-size: 3rem;
+}
+
+h2 {
+  font-size: 2.75rem;
+}
+
+h3 {
+  font-size: 2.5rem;
+}
+
+h4 {
+  font-size: 2.25rem;
+}
+
+h5 {
+  font-size: 2rem;
+}
+
+h6 {
+  font-size: 1.75rem;
+}
+
+body {
+  font-size: 16px;
+  font-family: 'Lato', sans-serif;
+}
+
+section {
+  padding: 1rem 10rem;
+}
+
+p {
+  font-size: 1.25rem;
+}
+
+#dataset-preview-root {
+  height: 25rem;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+table th {
+  padding-right: 1rem;
+}
+
+tbody>tr:nth-child(odd) {
+  background-color: #ecf0f1;
+}
+
+tbody>tr:nth-child(even) {
+  background-color: #bdc3c7;
+}
+
+tbody>tr:hover {
+  background-color: #95a5a6;
+}

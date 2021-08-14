@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>WASM Sandbox</title>
+
+        <!-- That's right! Where we're going we don't need no fancy frameworks ;) -->
+        <link href="./style.css" rel="stylesheet" />
+    </head>
+
+    <body>
+        <section>
+            <h1>WebAssembly sandbox</h1>
+            <p>
+                Welcome to my WebAssembly sandbox! This page is meant to be used as a very simple way to quickly test how much
+                faster WebAssembly modules are compared to (minified) JavaScript.
+            </p>
+            <p>
+                This "application" is able to perform calculations on a big dataset. How big this dataset is going to be will depend
+                on the options you select in the tool down below.
+            </p>
+            <p>
+                Once you're done, head on over to the section at the bottom of the page where you can run the business logic on your
+                dataset. Please do keep in mind that it's impossible to change the way the business logic works. You can only change
+                the size of your input dataset.
+            </p>
+            <p>
+                Lastly, make sure to head check out
+                <a href="https://github.com/tntmeijs/wasm_sandbox" target="_blank">https://github.com/tntmeijs/wasm_sandbox</a>
+                to inspect the source code of this application. Everything is open-source and licensed under the
+                <a href="https://tldrlegal.com/license/mit-license" target="_blank">MIT</a> license. :)
+            </p>
+        </section>
+
+        <section>
+            <h3>About WebAssembly</h3>
+            <p>
+                WebAssembly is a new type of code webbrowsers can execute. Up until now, almost everything on the web had to be
+                created using either JavaScript or something like Flash, Java applets, or Silverlight. These days, JavaScript
+                is quite literally almost everywhere. It even went to space!
+            </p>
+            <p>
+                Does this mean that JavaScript is <i>the</i> perfect language? No, it doesn't and it isn't. All languages are
+                good at what they're designed for. JavaScript was initially designed to add some dynamic functionality to
+                webpages. Over the years, however, JavaScript has been adapted to run on the front-end, back-end, and on native
+                platforms using frameworks such as Electron.
+            </p>
+            <p>
+                Nowadays we have cool things such as live photo and video editors running in the browser. Unfortunately,
+                JavaScript isn't the fastest language out there. As a result, highly demanding workloads may not run as well as
+                you'd like them to. To address these performance needs, WebAssembly was created.
+            </p>
+            <p>
+                Developers who work with compiled languages usually target ARM or x86 architectures. You could see WebAssembly
+                as yet another platform compilers can target. By targetting WebAssmbly, developers can easily port their
+                applications to the web. Additionally, instead of relying on the JavaScript JIT compiler to run things quickly,
+                we can now generate a tiny and heavily opitmized binary file for the WebAssembly VM.
+            </p>
+        </section>
+
+        <section>
+            <h3>Generate dataset</h3>
+
+            <form>
+                <div>
+                    <label for="row-count">Number of rows:</label>
+                    <input type="number" id="row-count" name="row-count" min="1" max="250000" value="1998" />
+                </div>
+
+                <br />
+
+                <div>
+                    <input type="submit" id="generate-dataset" value="generate" />
+                </div>
+            </form>
+
+            <br />
+
+            <div id="dataset-preview-root"></div>
+        </section>
+
+        <section>
+            <h3>Run business logic</h3>
+
+            <div>
+                <input type="button" id="load-wasm-module" value="load WASM module" />
+                <span id="wasm-module-load-time-indicator"></span>
+            </div>
+        </section>
+
+        <script src="./app.js"></script>
+    </body>
+</html>
