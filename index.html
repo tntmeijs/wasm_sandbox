@@ -86,7 +86,7 @@
             <form>
                 <div>
                     <label>Number of rows:</label>
-                    <input type="number" id="row-count" name="row-count" min="1" max="250000" value="1998" />
+                    <input type="number" id="row-count" name="row-count" min="1" value="1" />
                 </div>
 
                 <br />
@@ -107,6 +107,7 @@
             <div class="side-by-side">
                 <div>
                     <h6>WebAssembly</h6>
+                    <span id="parse-result-wasm">...</span>
     
                     <div>
                         <input type="button" id="load-wasm-module" value="load module" class="button" />
@@ -124,6 +125,7 @@
 
                 <div>
                     <h6>JavaScript</h6>
+                    <span id="parse-result-js">...</span>
     
                     <div>
                         <input type="button" id="load-js-module" value="load module" class="button" />
@@ -137,6 +139,7 @@
 
                 <div>
                     <h6>JavaScript (minified)</h6>
+                    <span id="parse-result-js-minified">...</span>
     
                     <div>
                         <input type="button" id="load-js-minified-module" value="load module" class="button" />

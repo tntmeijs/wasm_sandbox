@@ -104,17 +104,22 @@ const LAST_NAMES = [
     "Bouton"
 ];
 
+const MAX_PREVIEW_LENGTH = 1000;
+
 const DATASET_PREVIEW_ROOT = document.getElementById("dataset-preview-root");
 const CONSOLE = document.getElementById("console");
 
+const WASM_RESULT = document.getElementById("parse-result-wasm");
 const LOAD_WASM_MODULE_TIME = document.getElementById("load-wasm-module-time");
 const INITIALIZE_WASM_MODULE_TIME = document.getElementById("initialize-wasm-module-time");
 const EXECUTE_WASM_MODULE_TIME = document.getElementById("execute-wasm-module-time");
 
+const JS_RESULT = document.getElementById("parse-result-js");
 const LOAD_JS_MODULE_TIME = document.getElementById("load-js-module-time");
 const INITIALIZE_JS_MODULE_TIME = document.getElementById("initialize-js-module-time");
 const EXECUTE_JS_MODULE_TIME = document.getElementById("execute-js-module-time");
 
+const JS_MINIFIED_RESULT = document.getElementById("parse-result-js-minified");
 const LOAD_JS_MINIFIED_MODULE_TIME = document.getElementById("load-js-minified-module-time");
 const INITIALIZE_JS_MINIFIED_MODULE_TIME = document.getElementById("initialize-js-minified-module-time");
 const EXECUTE_JS_MINIFIED_MODULE_TIME = document.getElementById("execute-js-minified-module-time");
@@ -142,60 +147,60 @@ document.getElementById("load-js-minified-module").addEventListener("click", onL
 document.getElementById("execute-js-minified-module").addEventListener("click", onExecuteJsMinifiedModule);
 
 function logInfo(text) {
-    const NOW = new Date();
+    const now = new Date();
 
-    const CONTAINER = document.createElement("div");
-    CONTAINER.className = "line-container";
+    const container = document.createElement("div");
+    container.className = "line-container";
 
-    const TIMESTAMP = document.createElement("span");
-    TIMESTAMP.className = "log-timestamp";
-    TIMESTAMP.innerText = `[${NOW.getHours()}:${NOW.getMinutes()}:${NOW.getSeconds()}:${NOW.getMilliseconds()}]`;
+    const timestamp = document.createElement("span");
+    timestamp.className = "log-timestamp";
+    timestamp.innerText = `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()}]`;
 
-    const CONTENT = document.createElement("span");
-    CONTENT.className = "info-log";
-    CONTENT.innerText = text;
+    const content = document.createElement("span");
+    content.className = "info-log";
+    content.innerText = text;
 
-    CONTAINER.appendChild(TIMESTAMP);
-    CONTAINER.appendChild(CONTENT);
-    CONSOLE.insertBefore(CONTAINER, CONSOLE.firstChild);
+    container.appendChild(timestamp);
+    container.appendChild(content);
+    CONSOLE.insertBefore(container, CONSOLE.firstChild);
 }
 
 function logWarning(text) {
-    const NOW = new Date();
+    const now = new Date();
 
-    const CONTAINER = document.createElement("div");
-    CONTAINER.className = "line-container";
+    const container = document.createElement("div");
+    container.className = "line-container";
 
-    const TIMESTAMP = document.createElement("span");
-    TIMESTAMP.className = "log-timestamp";
-    TIMESTAMP.innerText = `[${NOW.getHours()}:${NOW.getMinutes()}:${NOW.getSeconds()}:${NOW.getMilliseconds()}]`;
+    const timestamp = document.createElement("span");
+    timestamp.className = "log-timestamp";
+    timestamp.innerText = `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()}]`;
 
-    const CONTENT = document.createElement("span");
-    CONTENT.className = "warning-log";
-    CONTENT.innerText = text;
+    const content = document.createElement("span");
+    content.className = "warning-log";
+    content.innerText = text;
 
-    CONTAINER.appendChild(TIMESTAMP);
-    CONTAINER.appendChild(CONTENT);
-    CONSOLE.insertBefore(CONTAINER, CONSOLE.firstChild);
+    container.appendChild(timestamp);
+    container.appendChild(content);
+    CONSOLE.insertBefore(container, CONSOLE.firstChild);
 }
 
 function logError(text) {
-    const NOW = new Date();
+    const now = new Date();
 
-    const CONTAINER = document.createElement("div");
-    CONTAINER.className = "line-container";
+    const container = document.createElement("div");
+    container.className = "line-container";
 
-    const TIMESTAMP = document.createElement("span");
-    TIMESTAMP.className = "log-timestamp";
-    TIMESTAMP.innerText = `[${NOW.getHours()}:${NOW.getMinutes()}:${NOW.getSeconds()}:${NOW.getMilliseconds()}]`;
+    const timestamp = document.createElement("span");
+    timestamp.className = "log-timestamp";
+    timestamp.innerText = `[${now.getHours()}:${now.getMinutes()}:${now.getSeconds()}:${now.getMilliseconds()}]`;
 
-    const CONTENT = document.createElement("span");
-    CONTENT.className = "error-log";
-    CONTENT.innerText = text;
+    const content = document.createElement("span");
+    content.className = "error-log";
+    content.innerText = text;
 
-    CONTAINER.appendChild(TIMESTAMP);
-    CONTAINER.appendChild(CONTENT);
-    CONSOLE.insertBefore(CONTAINER, CONSOLE.firstChild);
+    container.appendChild(timestamp);
+    container.appendChild(content);
+    CONSOLE.insertBefore(container, CONSOLE.firstChild);
 }
 
 function onGenerateDataset(event) {
@@ -212,23 +217,23 @@ function onGenerateDataset(event) {
 
 function generateDataset() {
     dataset = [];
-    const START = new Date();
+    const start = new Date();
 
     for (let row = 0; row < rowCount; ++row) {
-        const RANDOM_START_BALANCE = Math.floor(Math.random() * 10000.0) + 1;
-        const RANDOM_COSTS = Math.floor(RANDOM_START_BALANCE * Math.random()) + 1;
-        const RANDOM_ITEMS_PURCHASED = Math.floor(Math.random() * 100.0) + 1;
+        const randomStartBalance = Math.floor((Math.random() + 1.0) * 10000.0);
+        const randomCosts = Math.floor(randomStartBalance * (Math.random() + 1.0) / 2.0);
+        const randomItemsPurchased = Math.floor((Math.random() + 1.0) * 100.0);
 
         dataset.push([
             getRandomFirstName(),
             getRandomLastName(),
-            RANDOM_START_BALANCE,
-            RANDOM_START_BALANCE - RANDOM_COSTS,
-            RANDOM_ITEMS_PURCHASED
+            randomStartBalance,
+            randomStartBalance - randomCosts,
+            randomItemsPurchased
         ]);
     }
 
-    logInfo(`Generated dataset of ${rowCount} rows in ${new Date() - START} ms`);
+    logInfo(`Generated dataset of ${rowCount} rows in ${new Date() - start} ms`);
 }
 
 function getRandomFirstName() {
@@ -240,68 +245,75 @@ function getRandomLastName() {
 }
 
 function previewDataset() {
-    const START = new Date();
+    const start = new Date();
 
     DATASET_PREVIEW_ROOT.replaceChildren();
     
     // Construct a table
-    const TABLE = document.createElement("table");
-    const TABLE_HEAD = document.createElement("thead");
-    const TABLE_BODY = document.createElement("tbody");
-    const TABLE_HEAD_ROW = document.createElement("tr");
-    const TABLE_HEAD_ROW_INDEX = document.createElement("th");
-    const TABLE_HEAD_ROW_FIRST_NAME = document.createElement("th");
-    const TABLE_HEAD_ROW_LAST_NAME = document.createElement("th");
-    const TABLE_HEAD_ROW_START_BALANCE = document.createElement("th");
-    const TABLE_HEAD_ROW_END_BALANCE = document.createElement("th");
-    const TABLE_HEAD_ROW_ITEMS_PURCHASED = document.createElement("th");
+    const table = document.createElement("table");
+    const tableHead = document.createElement("thead");
+    const tableBody = document.createElement("tbody");
+    const tableHeadRow = document.createElement("tr");
+    const tableHeadRowIndex = document.createElement("th");
+    const tableHeadRowFirstName = document.createElement("th");
+    const tableHeadRowLastName = document.createElement("th");
+    const tableHeadRowStartBalance = document.createElement("th");
+    const tableHeadRowEndBalance = document.createElement("th");
+    const tableHeadRowItemsPurchased = document.createElement("th");
     
-    TABLE_HEAD_ROW_INDEX.innerText = "index";
-    TABLE_HEAD_ROW_FIRST_NAME.innerText = "first_name";
-    TABLE_HEAD_ROW_LAST_NAME.innerText = "last_name";
-    TABLE_HEAD_ROW_START_BALANCE.innerText = "start_balance";
-    TABLE_HEAD_ROW_END_BALANCE.innerText = "end_balance";
-    TABLE_HEAD_ROW_ITEMS_PURCHASED.innerText = "items_purchased";
+    tableHeadRowIndex.innerText = "index";
+    tableHeadRowFirstName.innerText = "first_name";
+    tableHeadRowLastName.innerText = "last_name";
+    tableHeadRowStartBalance.innerText = "start_balance";
+    tableHeadRowEndBalance.innerText = "end_balance";
+    tableHeadRowItemsPurchased.innerText = "items_purchased";
 
-    dataset.forEach((row, index) => {
-        const ROW_ELEMENT = document.createElement("tr");
-        const ROW_INDEX = document.createElement("td");
-        const FIRST_NAME = document.createElement("td");
-        const LAST_NAME = document.createElement("td");
-        const START_BALANCE = document.createElement("td");
-        const END_BALANCE = document.createElement("td");
-        const PURCHASE_COUNT = document.createElement("td");
+    for (let index = 0; index < dataset.length; ++index) {
+        if (index >= MAX_PREVIEW_LENGTH) {
+            logWarning(`Dataset preview has been truncated to ${MAX_PREVIEW_LENGTH} items avoid slowing down the browser`);
+            break;
+        }
 
-        ROW_INDEX.innerText = index;
-        FIRST_NAME.innerText = row[0];
-        LAST_NAME.innerText = row[1];
-        START_BALANCE.innerText = row[2];
-        END_BALANCE.innerText = row[3];
-        PURCHASE_COUNT.innerText = row[4];
+        const row = dataset[index];
 
-        ROW_ELEMENT.appendChild(ROW_INDEX);
-        ROW_ELEMENT.appendChild(FIRST_NAME);
-        ROW_ELEMENT.appendChild(LAST_NAME);
-        ROW_ELEMENT.appendChild(START_BALANCE);
-        ROW_ELEMENT.appendChild(END_BALANCE);
-        ROW_ELEMENT.appendChild(PURCHASE_COUNT);
-        TABLE_BODY.appendChild(ROW_ELEMENT);
-    });
+        const rowElement = document.createElement("tr");
+        const rowIndex = document.createElement("td");
+        const firstName = document.createElement("td");
+        const lastName = document.createElement("td");
+        const startBalance = document.createElement("td");
+        const endBalance = document.createElement("td");
+        const purchaseCount = document.createElement("td");
 
-    TABLE.appendChild(TABLE_HEAD);
-    TABLE.appendChild(TABLE_BODY);
-    TABLE_HEAD.appendChild(TABLE_HEAD_ROW);
-    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_INDEX);
-    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_FIRST_NAME);
-    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_LAST_NAME);
-    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_START_BALANCE);
-    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_END_BALANCE);
-    TABLE_HEAD_ROW.appendChild(TABLE_HEAD_ROW_ITEMS_PURCHASED);
+        rowIndex.innerText = index;
+        firstName.innerText = row[0];
+        lastName.innerText = row[1];
+        startBalance.innerText = row[2];
+        endBalance.innerText = row[3];
+        purchaseCount.innerText = row[4];
+
+        rowElement.appendChild(rowIndex);
+        rowElement.appendChild(firstName);
+        rowElement.appendChild(lastName);
+        rowElement.appendChild(startBalance);
+        rowElement.appendChild(endBalance);
+        rowElement.appendChild(purchaseCount);
+        tableBody.appendChild(rowElement);
+    }
+
+    table.appendChild(tableHead);
+    table.appendChild(tableBody);
+    tableHead.appendChild(tableHeadRow);
+    tableHeadRow.appendChild(tableHeadRowIndex);
+    tableHeadRow.appendChild(tableHeadRowFirstName);
+    tableHeadRow.appendChild(tableHeadRowLastName);
+    tableHeadRow.appendChild(tableHeadRowStartBalance);
+    tableHeadRow.appendChild(tableHeadRowEndBalance);
+    tableHeadRow.appendChild(tableHeadRowItemsPurchased);
 
     // Display the generated table
-    DATASET_PREVIEW_ROOT.appendChild(TABLE);
+    DATASET_PREVIEW_ROOT.appendChild(table);
 
-    logInfo(`Generated dataset table preview in ${new Date() - START} ms`);
+    logInfo(`Generated dataset table preview in ${new Date() - start} ms`);
 }
 
 function onLoadWasmModule() {
@@ -310,14 +322,14 @@ function onLoadWasmModule() {
         return;
     }
 
-    let START = new Date();
+    let start = new Date();
     
     import("./rs_parser/pkg/rs_parser.js")
         .then(module => {
-            const DELTA = new Date() - START;
+            const delta = new Date() - start;
             
-            LOAD_WASM_MODULE_TIME.innerText = `took ${DELTA} ms`;
-            logInfo(`WebAssembly module dynamic import took ${DELTA} ms`);
+            LOAD_WASM_MODULE_TIME.innerText = `took ${delta} ms`;
+            logInfo(`WebAssembly module dynamic import took ${delta} ms`);
             
             wasmModule = module;
         })
@@ -335,14 +347,14 @@ function onInitializeWasmModule() {
         return;
     }
 
-    let START = new Date();
+    let start = new Date();
 
     wasmModule.default()
         .then(() => {
-            const DELTA = new Date() - START;
+            const delta = new Date() - start;
 
-            INITIALIZE_WASM_MODULE_TIME.innerText = `took ${DELTA} ms`;
-            logInfo(`WebAssembly module initialization took ${DELTA} ms`);
+            INITIALIZE_WASM_MODULE_TIME.innerText = `took ${delta} ms`;
+            logInfo(`WebAssembly module initialization took ${delta} ms`);
 
             wasmModuleInitialized = true;
         });
@@ -364,14 +376,14 @@ function onExecuteWasmModule() {
         return;
     }
 
-    let START = new Date();
+    let start = new Date();
 
     wasmModule.greet("WebAssembly");
 
-    const DELTA = new Date() - START;
+    const delta = new Date() - start;
 
-    EXECUTE_WASM_MODULE_TIME.innerText = `took ${DELTA} ms`;
-    logInfo(`WebAssembly execution took ${DELTA} ms`);
+    EXECUTE_WASM_MODULE_TIME.innerText = `took ${delta} ms`;
+    logInfo(`WebAssembly execution took ${delta} ms`);
 }
 
 function onLoadJsModule() {
@@ -380,14 +392,14 @@ function onLoadJsModule() {
         return;
     }
 
-    let START = new Date();
+    let start = new Date();
     
     import("./js_parser/js_parser.js")
         .then(module => {
-            const DELTA = new Date() - START;
+            const delta = new Date() - start;
             
-            LOAD_JS_MODULE_TIME.innerText = `took ${DELTA} ms`;
-            logInfo(`JavaScript module dynamic import took ${DELTA} ms`);
+            LOAD_JS_MODULE_TIME.innerText = `took ${delta} ms`;
+            logInfo(`JavaScript module dynamic import took ${delta} ms`);
             
             jsModule = module;
         })
@@ -405,14 +417,15 @@ function onExecuteJsModule() {
         return;
     }
 
-    let START = new Date();
+    let start = new Date();
 
-    jsModule.greet("JavaScript");
+    const result = jsModule.parse(dataset);
+    JS_RESULT.innerText = `${result.name} paid the lowest average price per item: €${result.averagePrice.toFixed(2)}`;
 
-    const DELTA = new Date() - START;
+    const delta = new Date() - start;
 
-    EXECUTE_JS_MODULE_TIME.innerText = `took ${DELTA} ms`;
-    logInfo(`JavaScript execution took ${DELTA} ms`);
+    EXECUTE_JS_MODULE_TIME.innerText = `took ${delta} ms`;
+    logInfo(`JavaScript execution took ${delta} ms`);
 }
 
 function onLoadJsMinifiedModule() {
