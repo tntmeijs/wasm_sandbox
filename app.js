@@ -2,25 +2,19 @@ const START_BALANCE_FIELD = 0;
 const END_BALANCE_FIELD = 1;
 const ITEMS_PURCHASED_FIELD = 2;
 const OUTSTANDING_DEBT_FIELD = 3;
+
 const MAX_PREVIEW_LENGTH = 1000;
 
 const DATASET_PREVIEW_ROOT = document.getElementById("dataset-preview-root");
 const CONSOLE = document.getElementById("console");
 
-const WASM_RESULT = document.getElementById("parse-result-wasm");
 const LOAD_WASM_MODULE_TIME = document.getElementById("load-wasm-module-time");
 const INITIALIZE_WASM_MODULE_TIME = document.getElementById("initialize-wasm-module-time");
 const EXECUTE_WASM_MODULE_TIME = document.getElementById("execute-wasm-module-time");
 
-const JS_RESULT = document.getElementById("parse-result-js");
 const LOAD_JS_MODULE_TIME = document.getElementById("load-js-module-time");
 const INITIALIZE_JS_MODULE_TIME = document.getElementById("initialize-js-module-time");
 const EXECUTE_JS_MODULE_TIME = document.getElementById("execute-js-module-time");
-
-const JS_MINIFIED_RESULT = document.getElementById("parse-result-js-minified");
-const LOAD_JS_MINIFIED_MODULE_TIME = document.getElementById("load-js-minified-module-time");
-const INITIALIZE_JS_MINIFIED_MODULE_TIME = document.getElementById("initialize-js-minified-module-time");
-const EXECUTE_JS_MINIFIED_MODULE_TIME = document.getElementById("execute-js-minified-module-time");
 
 let rowCount = document.getElementById("row-count").value;
 let dataset = [];
@@ -29,7 +23,6 @@ let wasmModule = null;
 let wasmModuleInitialized = false;
 
 let jsModule = null;
-let jsMinifiedModule = null;
 
 document.getElementById("generate-dataset").addEventListener("click", onGenerateDataset);
 document.getElementById("row-count").addEventListener("change", event => rowCount = event.target.value);
@@ -40,9 +33,6 @@ document.getElementById("execute-wasm-module").addEventListener("click", onExecu
 
 document.getElementById("load-js-module").addEventListener("click", onLoadJsModule);
 document.getElementById("execute-js-module").addEventListener("click", onExecuteJsModule);
-
-document.getElementById("load-js-minified-module").addEventListener("click", onLoadJsMinifiedModule);
-document.getElementById("execute-js-minified-module").addEventListener("click", onExecuteJsMinifiedModule);
 
 function logInfo(text) {
     const now = new Date();
@@ -118,10 +108,10 @@ function generateDataset() {
     const start = new Date();
 
     for (let row = 0; row < rowCount; ++row) {
-        const randomStartBalance = Math.floor((Math.random() + 1.0) * 10000.0);
-        const randomCosts = Math.floor(randomStartBalance * (Math.random() + 1.0) / 2.0);
+        const randomStartBalance = (Math.random() + 1.0) * 10000.0;
+        const randomCosts = randomStartBalance * (Math.random() + 1.0) * 0.5;
         const randomItemsPurchased = Math.floor((Math.random() + 1.0) * 100.0);
-        const outstandingDebt = Math.floor(Math.random() * 5000.0);
+        const outstandingDebt = Math.random() * 5000.0;
 
         dataset.push([
             randomStartBalance,
@@ -172,10 +162,10 @@ function previewDataset() {
         const outstandingDebt = document.createElement("td");
 
         rowIndex.innerText = index;
-        startBalance.innerText = row[START_BALANCE_FIELD];
-        endBalance.innerText = row[END_BALANCE_FIELD];
+        startBalance.innerText = row[START_BALANCE_FIELD].toFixed(2);
+        endBalance.innerText = row[END_BALANCE_FIELD].toFixed(2);
         purchaseCount.innerText = row[ITEMS_PURCHASED_FIELD];
-        outstandingDebt.innerText = row[OUTSTANDING_DEBT_FIELD];
+        outstandingDebt.innerText = row[OUTSTANDING_DEBT_FIELD].toFixed(2);
 
         rowElement.appendChild(rowIndex);
         rowElement.appendChild(startBalance);
@@ -262,16 +252,10 @@ function onExecuteWasmModule() {
 
     let start = new Date();
 
-    let bestScore = 0;
+    // This could very well overflow if the benchmark uses a large dataset ¯\_(ツ)_/¯
     dataset.forEach(row => {
-        const score = wasmModule.parse();
-
-        if (score > bestScore) {
-            bestScore = score;
-        }
+        wasmModule.parse(row[START_BALANCE_FIELD], row[END_BALANCE_FIELD], row[ITEMS_PURCHASED_FIELD], row[OUTSTANDING_DEBT_FIELD]);
     });
-
-    WASM_RESULT.innerText = `Best score: ${bestScore}`;
 
     const delta = new Date() - start;
 
@@ -312,27 +296,12 @@ function onExecuteJsModule() {
 
     let start = new Date();
 
-    let bestScore = 0;
     dataset.forEach(row => {
-        const score = jsModule.parse();
-
-        if (score > bestScore) {
-            bestScore = score;
-        }
+        jsModule.parse(row[START_BALANCE_FIELD], row[END_BALANCE_FIELD], row[ITEMS_PURCHASED_FIELD], row[OUTSTANDING_DEBT_FIELD]);
     });
-
-    JS_RESULT.innerText = `Best score: ${bestScore}`;
 
     const delta = new Date() - start;
 
     EXECUTE_JS_MODULE_TIME.innerText = `took ${delta} ms`;
     logInfo(`JavaScript execution took ${delta} ms`);
-}
-
-function onLoadJsMinifiedModule() {
-    logWarning("Load minified JS module has not been implemented yet");
-}
-
-function onExecuteJsMinifiedModule() {
-    logWarning("Execute minified JS module has not been implemented yet");
 }
