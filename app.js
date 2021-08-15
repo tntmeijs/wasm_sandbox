@@ -1,109 +1,7 @@
-const FIRST_NAMES = [
-    "Cornelius",
-    "Silva",
-    "Tori",
-    "Elli",
-    "Brittaney",
-    "Lien",
-    "Sibyl",
-    "Keila",
-    "Ping",
-    "Eldridge",
-    "Annetta",
-    "Ai",
-    "Helga",
-    "Su",
-    "Reda",
-    "Saul",
-    "Kenda",
-    "Lonnie",
-    "Louis",
-    "Kendra",
-    "Lyndsey",
-    "Laurette",
-    "Vaughn",
-    "Berta",
-    "Curt",
-    "Seth",
-    "Jeraldine",
-    "Queen",
-    "Lacie",
-    "Theo",
-    "Lavona",
-    "Harriett",
-    "Delma",
-    "Charmain",
-    "Aurelio",
-    "Janine",
-    "Melisa",
-    "Oscar",
-    "Janie",
-    "Reinaldo",
-    "Gordon",
-    "Viki",
-    "Lan",
-    "Suzanne",
-    "Donna",
-    "Aura",
-    "Lupe",
-    "Deena",
-    "Hwa",
-    "Luise"
-];
-
-const LAST_NAMES = [
-    "Chapel",
-    "Penner",
-    "Olague",
-    "Piasecki",
-    "Solum",
-    "Croke",
-    "Rishel",
-    "Rodrique",
-    "Mccusker",
-    "Friedman",
-    "Shufelt",
-    "Reeve",
-    "Silvestri",
-    "Biro",
-    "Defranco",
-    "Noah",
-    "Adkins",
-    "Dowd",
-    "Holoman",
-    "Lango",
-    "Payson",
-    "Marsala",
-    "Mendonca",
-    "Romer",
-    "Konrad",
-    "Pangle",
-    "Presutti",
-    "Wymore",
-    "Badger",
-    "Winland",
-    "Hibbard",
-    "Rowen",
-    "Lockamy",
-    "Waage",
-    "Huffaker",
-    "Maddock",
-    "Dufour",
-    "Marcellus",
-    "Morefield",
-    "Ropp",
-    "Doverspike",
-    "Tillinghast",
-    "Rosson",
-    "Tripoli",
-    "Piner",
-    "Acton",
-    "Scholze",
-    "Rames",
-    "Degarmo",
-    "Bouton"
-];
-
+const START_BALANCE_FIELD = 0;
+const END_BALANCE_FIELD = 1;
+const ITEMS_PURCHASED_FIELD = 2;
+const OUTSTANDING_DEBT_FIELD = 3;
 const MAX_PREVIEW_LENGTH = 1000;
 
 const DATASET_PREVIEW_ROOT = document.getElementById("dataset-preview-root");
@@ -223,25 +121,17 @@ function generateDataset() {
         const randomStartBalance = Math.floor((Math.random() + 1.0) * 10000.0);
         const randomCosts = Math.floor(randomStartBalance * (Math.random() + 1.0) / 2.0);
         const randomItemsPurchased = Math.floor((Math.random() + 1.0) * 100.0);
+        const outstandingDebt = Math.floor(Math.random() * 5000.0);
 
         dataset.push([
-            getRandomFirstName(),
-            getRandomLastName(),
             randomStartBalance,
             randomStartBalance - randomCosts,
-            randomItemsPurchased
+            randomItemsPurchased,
+            outstandingDebt
         ]);
     }
 
     logInfo(`Generated dataset of ${rowCount} rows in ${new Date() - start} ms`);
-}
-
-function getRandomFirstName() {
-    return FIRST_NAMES[Math.floor(Math.random() * FIRST_NAMES.length)];
-}
-
-function getRandomLastName() {
-    return LAST_NAMES[Math.floor(Math.random() * LAST_NAMES.length)];
 }
 
 function previewDataset() {
@@ -255,18 +145,16 @@ function previewDataset() {
     const tableBody = document.createElement("tbody");
     const tableHeadRow = document.createElement("tr");
     const tableHeadRowIndex = document.createElement("th");
-    const tableHeadRowFirstName = document.createElement("th");
-    const tableHeadRowLastName = document.createElement("th");
     const tableHeadRowStartBalance = document.createElement("th");
     const tableHeadRowEndBalance = document.createElement("th");
     const tableHeadRowItemsPurchased = document.createElement("th");
+    const tableHeadRowOutstandingDebt = document.createElement("th");
     
     tableHeadRowIndex.innerText = "index";
-    tableHeadRowFirstName.innerText = "first_name";
-    tableHeadRowLastName.innerText = "last_name";
     tableHeadRowStartBalance.innerText = "start_balance";
     tableHeadRowEndBalance.innerText = "end_balance";
     tableHeadRowItemsPurchased.innerText = "items_purchased";
+    tableHeadRowOutstandingDebt.innerText = "outstanding_debt";
 
     for (let index = 0; index < dataset.length; ++index) {
         if (index >= MAX_PREVIEW_LENGTH) {
@@ -278,25 +166,22 @@ function previewDataset() {
 
         const rowElement = document.createElement("tr");
         const rowIndex = document.createElement("td");
-        const firstName = document.createElement("td");
-        const lastName = document.createElement("td");
         const startBalance = document.createElement("td");
         const endBalance = document.createElement("td");
         const purchaseCount = document.createElement("td");
+        const outstandingDebt = document.createElement("td");
 
         rowIndex.innerText = index;
-        firstName.innerText = row[0];
-        lastName.innerText = row[1];
-        startBalance.innerText = row[2];
-        endBalance.innerText = row[3];
-        purchaseCount.innerText = row[4];
+        startBalance.innerText = row[START_BALANCE_FIELD];
+        endBalance.innerText = row[END_BALANCE_FIELD];
+        purchaseCount.innerText = row[ITEMS_PURCHASED_FIELD];
+        outstandingDebt.innerText = row[OUTSTANDING_DEBT_FIELD];
 
         rowElement.appendChild(rowIndex);
-        rowElement.appendChild(firstName);
-        rowElement.appendChild(lastName);
         rowElement.appendChild(startBalance);
         rowElement.appendChild(endBalance);
         rowElement.appendChild(purchaseCount);
+        rowElement.appendChild(outstandingDebt);
         tableBody.appendChild(rowElement);
     }
 
@@ -304,11 +189,10 @@ function previewDataset() {
     table.appendChild(tableBody);
     tableHead.appendChild(tableHeadRow);
     tableHeadRow.appendChild(tableHeadRowIndex);
-    tableHeadRow.appendChild(tableHeadRowFirstName);
-    tableHeadRow.appendChild(tableHeadRowLastName);
     tableHeadRow.appendChild(tableHeadRowStartBalance);
     tableHeadRow.appendChild(tableHeadRowEndBalance);
     tableHeadRow.appendChild(tableHeadRowItemsPurchased);
+    tableHeadRow.appendChild(tableHeadRowOutstandingDebt);
 
     // Display the generated table
     DATASET_PREVIEW_ROOT.appendChild(table);
@@ -378,7 +262,16 @@ function onExecuteWasmModule() {
 
     let start = new Date();
 
-    wasmModule.greet("WebAssembly");
+    let bestScore = 0;
+    dataset.forEach(row => {
+        const score = wasmModule.parse();
+
+        if (score > bestScore) {
+            bestScore = score;
+        }
+    });
+
+    WASM_RESULT.innerText = `Best score: ${bestScore}`;
 
     const delta = new Date() - start;
 
@@ -419,8 +312,16 @@ function onExecuteJsModule() {
 
     let start = new Date();
 
-    const result = jsModule.parse(dataset);
-    JS_RESULT.innerText = `${result.name} paid the lowest average price per item: €${result.averagePrice.toFixed(2)}`;
+    let bestScore = 0;
+    dataset.forEach(row => {
+        const score = jsModule.parse();
+
+        if (score > bestScore) {
+            bestScore = score;
+        }
+    });
+
+    JS_RESULT.innerText = `Best score: ${bestScore}`;
 
     const delta = new Date() - start;
 
