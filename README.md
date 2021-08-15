@@ -2,6 +2,7 @@
 Welcome to my WebAssembly sandbox project.
 
 This project is written using plain HTML, CSS, and JavaScript.
+
 Oh, and some Rust compiled to WebAssembly, of course! 😉
 
 This application showcases the insanely quick computational operations you can perform when running WebAssembly.
